@@ -1,5 +1,5 @@
 # Ex.08 Design of Interactive Image Gallery
-# Date:09-12-2024
+# Date:15-12-2024
 # AIM:
 To design a web application for an inteactive image gallery with minimum five images.
 
@@ -29,228 +29,176 @@ Publish the website in the given URL.
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery</title>
+    <title>Interactive Photo Gallery</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            background-color: #7d7f7d;
+            font-family: 'Open Sans', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 1rem 0;
-            text-align: center;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 2.5rem;
-        }
-
-        .filters {
-            text-align: center;
-            margin: 1rem 0;
-        }
-
-        .filters button {
-            background-color: #333;
-            color: #fff;
-            padding: 0.5rem 1rem;
-            margin: 0 0.5rem;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .filters button:hover, .filters button.active {
-            background-color: #555;
-        }
-
-        .gallery {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            margin: 2rem;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+            animation: fadeIn 1s ease-in-out;
         }
 
         .gallery-item {
             position: relative;
-            margin: 10px;
             overflow: hidden;
-            cursor: pointer;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
         .gallery-item img {
             width: 100%;
             height: auto;
+            border-radius: 10px;
             transition: transform 0.3s ease, filter 0.3s ease;
         }
 
-        .gallery-item:hover img {
+        .gallery-item img:hover {
             transform: scale(1.1);
-            filter: brightness(0.7);
+            filter: brightness(0.8);
+            cursor: pointer;
         }
 
-        .gallery-item .overlay {
+        .caption {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: #fff;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            bottom: 8px;
+            left: 8px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: center;
+            width: calc(100% - 16px);
         }
 
-        .gallery-item:hover .overlay {
-            opacity: 1;
-        }
-
-        .lightbox {
+        .modal {
             display: none;
             position: fixed;
-            z-index: 999;
-            padding-top: 60px;
-            left: 0;
+            z-index: 1;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.8);
+            background-color: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
         }
 
-        .lightbox-content {
+        .modal-content {
             margin: auto;
             display: block;
-            max-width: 80%;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
         }
 
         .close {
             position: absolute;
-            top: 15px;
-            right: 35px;
-            color: #fff;
-            font-size: 40px;
-            font-weight: bold;
+            top: 10px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
             cursor: pointer;
         }
 
-        @media (max-width: 768px) {
-            .gallery-item {
-                width: 100%;
-                max-width: 100%;
-            }
+        .modal-description {
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 16px;
         }
 
-        @media (min-width: 769px) {
-            .gallery-item {
-                width: 30%;
-                max-width: 30%;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Image Gallery</h1>
-    </header>
-    <div class="filters">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="nature">Nature</button>
-        <button class="filter-btn" data-filter="architecture">Architecture</button>
-        <button class="filter-btn" data-filter="people">People</button>
-    </div>
-    <section class="gallery">
-        <div class="gallery-item" data-category="nature">
-            <img width="200" height="200" src="nature1.jpeg">
-            <div class="overlay">Nature</div>
-        </div>
-        <div class="gallery-item" data-category="architecture">
-            <img width="200" height="200" src="arch1.jpeg">
-            <div class="overlay">Architecture</div>
-        </div>
-        <div class="gallery-item" data-category="people">
-            <img width="200" height="200" src="people.jpeg">
-            <div class="overlay">People</div>
-        </div>
-        <div class="gallery-item" data-category="nature">
-            <img width="200" height="200" src="pexels-photo-321570.jpeg">
-            <div class="overlay">Nature</div>
-        </div>
-        <div class="gallery-item" data-category="architecture">
-            <img width="200" height="200" src="arch2.jpeg">
-            <div class="overlay">Architecture</div>
-        </div>
-        <div class="gallery-item" data-category="people">
-            <img width="200" height="200" src="people4.jpeg">
-            <div class="overlay">People</div>
-        </div>
-    </section>
-    <div id="lightbox" class="lightbox">
-        <span class="close">&times;</span>
-        <img class="lightbox-content" id="lightbox-image">
-    </div>
-    <script>
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-image');
-        const close = document.getElementsByClassName('close')[0];
 
-        document.querySelectorAll('.gallery-item img').forEach(img => {
-            img.addEventListener('click', function(event) {
-                event.preventDefault();
-                lightbox.style.display = 'block';
-                lightboxImg.src = this.src;
+    <div class="header">Photo Gallery</div>
+
+    <div class="gallery-container">
+        <div class="gallery-item">
+            <img src="pexels-photo-321570.jpeg" alt="Sri Lanka" data-description="Sri Lanka">
+            <div class="caption">Sri Lanka</div>
+        </div>
+        <div class="gallery-item">
+            <img src="photo-1609609830354-8f615d61b9c8.avif" alt="Isha Temple" data-description="Isha Temple">
+            <div class="caption">Isha Temple</div>
+        </div>
+        <div class="gallery-item">
+            <img src="premium_photo-1697730489433-4a5fe8a77f96.avif" alt="Mumbai" data-description="Mumbai">
+            <div class="caption">Mumbai</div>
+        </div>
+        <div class="gallery-item">
+            <img src="istockphoto-1073216888-612x612.jpg" alt="Bay Of Bengal" data-description="Bay Of Bengal">
+            <div class="caption">Bay Of Bengal</div>
+        </div>
+        <div class="gallery-item">
+            <img src="arch1.jpeg" alt="Australia" data-description="Australia">
+            <div class="caption">Australia</div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <span class="close" id="close">&times;</span>
+        <img class="modal-content" id="modal-img">
+        <div class="modal-description" id="modal-description"></div>
+    </div>
+
+    <script>
+        const images = document.querySelectorAll('.gallery-item img');
+        const modal = document.getElementById('modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalDescription = document.getElementById('modal-description');
+        const closeBtn = document.getElementById('close');
+
+        images.forEach((image) => {
+            image.addEventListener('click', () => {
+                modal.style.display = 'flex';
+                modalImg.src = image.src;
+                modalDescription.textContent = image.getAttribute('data-description');
             });
         });
 
-        close.onclick = function() {
-            lightbox.style.display = 'none';
-        };
-
-        window.onclick = function(event) {
-            if (event.target === lightbox) {
-                lightbox.style.display = 'none';
-            }
-        };
-
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const galleryItems = document.querySelectorAll('.gallery-item');
-
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                const filter = btn.getAttribute('data-filter');
-
-                galleryItems.forEach(item => {
-                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
         });
     </script>
 </body>
 </html>
 ```
 # OUTPUT:
-![Screenshot 2024-12-09 212600](https://github.com/user-attachments/assets/045e7804-534d-4e8f-9afd-59359a39c658)
-![Screenshot 2024-12-09 212627](https://github.com/user-attachments/assets/a4b8119f-0041-43ec-b1fd-98ccf8102db9)
-![Screenshot 2024-12-09 212638](https://github.com/user-attachments/assets/b11508b4-cbbd-4053-be22-c910302c8f62)
-![Screenshot 2024-12-09 212655](https://github.com/user-attachments/assets/1110b32d-5808-40aa-9b8a-4160267b2e43)
-
-
-
+![Screenshot 2024-12-15 211310](https://github.com/user-attachments/assets/cc2bf4f0-9d53-454d-bf98-b90b5abf44a4)
+![Screenshot 2024-12-15 211324](https://github.com/user-attachments/assets/1639afc1-8719-40a5-9f51-d3022d36a9a5)
+![Screenshot 2024-12-15 211344](https://github.com/user-attachments/assets/77b176a2-8da2-4711-a0e4-00c29e2483f1)
+![Screenshot 2024-12-15 211400](https://github.com/user-attachments/assets/28c7fbb2-cbb6-4144-ae5b-a95e1c8d9fde)
+![Screenshot 2024-12-15 211416](https://github.com/user-attachments/assets/beae49d8-8dbb-4c48-9efa-6d6d77ce678f)
+![Screenshot 2024-12-15 211431](https://github.com/user-attachments/assets/5b72c14d-06cc-4037-83bc-493614399651)
 
 # RESULT:
 The program for designing an interactive image gallery using HTML, CSS and JavaScript is executed successfully.
